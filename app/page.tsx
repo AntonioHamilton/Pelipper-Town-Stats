@@ -283,6 +283,46 @@ function CenteredSelect({
   );
 }
 
+function JobIcon({ job, label }: { job: string; label: string }) {
+  const [hover, setHover] = useState(false);
+  const [pinned, setPinned] = useState(false);
+  const rootRef = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (!pinned) return;
+    function onPointerDown(e: PointerEvent) {
+      if (!rootRef.current?.contains(e.target as Node)) setPinned(false);
+    }
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [pinned]);
+
+  const open = hover || pinned;
+
+  return (
+    <span
+      ref={rootRef}
+      className={styles.jobWrap}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+    >
+      <button
+        type="button"
+        className={styles.jobSlot}
+        aria-label={label}
+        onClick={() => setPinned((o) => !o)}
+      >
+        <Image src={`/icons/${job.toLowerCase()}.png`} alt="" width={32} height={32} unoptimized />
+      </button>
+      {open && (
+        <span role="tooltip" className={styles.jobTooltip}>
+          {label}
+        </span>
+      )}
+    </span>
+  );
+}
+
 export default function Home() {
   const [lang, setLang] = useState<Lang>("pt");
   const [activeGroup, setActiveGroup] = useState(ALL);
@@ -519,21 +559,7 @@ export default function Home() {
                       )}
                       <div className={styles.jobs}>
                         {p.jobs.map((job) => (
-                          <span
-                            key={job}
-                            className={styles.jobSlot}
-                            role="img"
-                            aria-label={JOB_NAMES[lang][job] ?? job}
-                            title={JOB_NAMES[lang][job] ?? job}
-                          >
-                            <Image
-                              src={`/icons/${job.toLowerCase()}.png`}
-                              alt=""
-                              width={32}
-                              height={32}
-                              unoptimized
-                            />
-                          </span>
+                          <JobIcon key={job} job={job} label={JOB_NAMES[lang][job] ?? job} />
                         ))}
                       </div>
                     </div>
