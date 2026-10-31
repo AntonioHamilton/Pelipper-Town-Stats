@@ -158,6 +158,7 @@ const UI = {
     noFavorites: "Nenhum favorito ainda.",
     searchFieldLabel: "Busca",
     typeFilterLabel: "Tipo",
+    showLabel: "Mostrar",
     allTypes: "Todos os tipos",
     generation: "Geração",
     megaEvolutions: "Mega evoluções",
@@ -190,6 +191,7 @@ const UI = {
     noFavorites: "No favorites yet.",
     searchFieldLabel: "Search",
     typeFilterLabel: "Type",
+    showLabel: "Show",
     allTypes: "All types",
     generation: "Generation",
     megaEvolutions: "Mega evolutions",
@@ -536,18 +538,6 @@ export default function Home() {
         </header>
 
         <nav className={styles.sidebar} aria-label={t.groupsLabel}>
-          <select
-            className={`${styles.select} ${styles.groupSelect}`}
-            aria-label={t.typeSelectLabel}
-            value={activeGroup}
-            onChange={(e) => selectGroup(e.target.value)}
-          >
-            {tabs.map((g) => (
-              <option key={g.id} value={g.id}>
-                {g.label}
-              </option>
-            ))}
-          </select>
           <div className={styles.tabs} role="tablist" aria-label={t.groupsLabel}>
             {tabs.map((g) => (
               <button
@@ -577,6 +567,16 @@ export default function Home() {
                 placeholder={t.searchPlaceholder}
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
+              />
+            </div>
+
+            <div className={`${styles.field} ${styles.groupField}`}>
+              <span className={styles.fieldLabel}>{t.showLabel}</span>
+              <CenteredSelect
+                value={activeGroup}
+                options={tabs.map((g) => ({ value: g.id, label: g.label }))}
+                onChange={selectGroup}
+                ariaLabel={t.showLabel}
               />
             </div>
 

@@ -113,11 +113,6 @@
   min-width: 0;
 }
 
-.groupSelect {
-  display: block;
-  width: 100%;
-}
-
 .tabs {
   display: none;
   flex-direction: column;
@@ -125,9 +120,6 @@
 }
 
 @media (min-width: 900px) {
-  .groupSelect {
-    display: none;
-  }
 
   .tabs {
     display: flex;
@@ -200,22 +192,12 @@
   text-align: left;
 }
 
-.select,
 .dropdownButton {
   appearance: none;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5l5 5 5-5' fill='none' stroke='%2397a0b5' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
   background-size: 12px 8px;
-}
-
-.select {
-  padding: 9px 36px 9px 12px;
-  font: inherit;
-  color: var(--text);
-  background-color: var(--card);
-  border: 1px solid var(--border);
-  border-radius: 8px;
 }
 
 .dropdown {
@@ -226,7 +208,7 @@
   min-width: 220px;
   padding: 9px 36px 9px 12px;
   font: inherit;
-  text-align: center;
+  text-align: left;
   color: var(--text);
   background-color: var(--card);
   border: 1px solid var(--border);
@@ -566,6 +548,10 @@
     width: 112px;
     height: 112px;
   }
+
+  .groupField {
+    display: none;
+  }
 }
 
 @media (max-width: 899px) {
@@ -575,7 +561,8 @@
     gap: 12px;
   }
 
-  .searchField {
+  .searchField,
+  .groupField {
     grid-column: 1 / -1;
     max-width: none;
   }
