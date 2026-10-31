@@ -355,10 +355,36 @@
 }
 
 .spriteBox {
-  flex: 0 0 96px;
+  flex: 0 0 116px;
   display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.jobs {
+  display: grid;
+  grid-template-columns: repeat(3, 36px);
+  gap: 4px;
+}
+
+.jobSlot {
+  display: flex;
+  box-sizing: border-box;
+  width: 36px;
+  height: 36px;
   align-items: center;
   justify-content: center;
+  background: #fde997;
+  border: 2px solid #d9b84a;
+  border-radius: 6px;
+}
+
+.jobSlot img {
+  display: block;
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
 }
 
 .sprite {

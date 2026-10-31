@@ -16,6 +16,7 @@ type Pokemon = {
   types: string[];
   sprite: string | null;
   stats: number[];
+  jobs: string[];
   derived?: boolean;
 };
 
@@ -102,6 +103,38 @@ const TYPE_NAMES: Record<Lang, Record<string, string>> = {
     Dark: "Dark",
     Steel: "Steel",
     Fairy: "Fairy",
+  },
+};
+
+// Tarefas que um Pokémon pode fazer no Stardew (campo `Jobs` do mod). Ícone: /icons/<tarefa minúscula>.png
+const JOB_NAMES: Record<Lang, Record<string, string>> = {
+  pt: {
+    Forage: "Forragear",
+    Harvest: "Colher",
+    AnimalCare: "Cuidar de animais",
+    OrchardCare: "Cuidar do pomar",
+    Mine: "Minerar",
+    Transport: "Transportar",
+    Tilling: "Arar a terra",
+    ClearBrush: "Limpar mato",
+    ChopWood: "Cortar madeira",
+    Water: "Regar plantas",
+    Fishing: "Pescar",
+    CrabPot: "Pote de caranguejo",
+  },
+  en: {
+    Forage: "Forage",
+    Harvest: "Harvest",
+    AnimalCare: "Animal care",
+    OrchardCare: "Orchard care",
+    Mine: "Mine",
+    Transport: "Transport",
+    Tilling: "Till soil",
+    ClearBrush: "Clear brush",
+    ChopWood: "Chop wood",
+    Water: "Water plants",
+    Fishing: "Fish",
+    CrabPot: "Crab pot",
   },
 };
 
@@ -484,6 +517,25 @@ export default function Home() {
                           unoptimized
                         />
                       )}
+                      <div className={styles.jobs}>
+                        {p.jobs.map((job) => (
+                          <span
+                            key={job}
+                            className={styles.jobSlot}
+                            role="img"
+                            aria-label={JOB_NAMES[lang][job] ?? job}
+                            title={JOB_NAMES[lang][job] ?? job}
+                          >
+                            <Image
+                              src={`/icons/${job.toLowerCase()}.png`}
+                              alt=""
+                              width={32}
+                              height={32}
+                              unoptimized
+                            />
+                          </span>
+                        ))}
+                      </div>
                     </div>
 
                     <div className={styles.info}>
