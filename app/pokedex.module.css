@@ -213,7 +213,7 @@
   padding: 9px 36px 9px 12px;
   font: inherit;
   color: var(--text);
-  background: var(--card);
+  background-color: var(--card);
   border: 1px solid var(--border);
   border-radius: 8px;
 }
@@ -253,7 +253,7 @@
 
 .dropdownOption {
   padding: 8px 12px;
-  text-align: center;
+  text-align: left;
   color: var(--text);
   cursor: pointer;
 }
@@ -584,6 +584,18 @@
     width: 100%;
     min-width: 0;
     padding: 8px 30px 8px 10px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .dropdownList {
+    max-height: 200px;
+  }
+
+  .dropdownOption {
+    padding: 8px 10px;
     font-size: 0.8rem;
     white-space: nowrap;
     overflow: hidden;

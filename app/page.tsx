@@ -287,7 +287,12 @@ function CenteredSelect({
 }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLUListElement>(null);
   const current = options.find((o) => o.value === value)?.label ?? "";
+
+  useEffect(() => {
+    if (open) listRef.current?.scrollIntoView({ block: "center" });
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -318,7 +323,7 @@ function CenteredSelect({
         {current}
       </button>
       {open && (
-        <ul className={styles.dropdownList} role="listbox" aria-label={ariaLabel}>
+        <ul ref={listRef} className={styles.dropdownList} role="listbox" aria-label={ariaLabel}>
           {options.map((o) => (
             <li
               key={o.value}
