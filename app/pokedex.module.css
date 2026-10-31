@@ -365,12 +365,15 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
+  gap: 4px;
+  box-sizing: border-box;
   width: 100%;
+  height: 36px;
   margin-top: auto;
-  padding: 6px 10px;
+  padding: 0 8px;
   font: inherit;
-  font-size: 0.8rem;
+  font-size: 0.7rem;
+  white-space: nowrap;
   color: #1b1f2e;
   background: #fde997;
   border: 2px solid #d9b84a;
@@ -426,8 +429,8 @@
 }
 
 .sprite {
-  width: 96px;
-  height: 96px;
+  width: 100%;
+  height: auto;
   image-rendering: pixelated;
 }
 
