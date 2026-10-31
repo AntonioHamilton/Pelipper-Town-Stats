@@ -352,7 +352,6 @@
 }
 
 .card {
-  position: relative;
   display: flex;
   gap: 16px;
   min-width: 0;
@@ -363,20 +362,29 @@
 }
 
 .favButton {
-  position: absolute;
-  top: 8px;
-  right: 10px;
-  padding: 0 4px;
-  font-size: 1.3rem;
-  line-height: 1;
-  color: var(--muted);
-  background: none;
-  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  width: 100%;
+  margin-top: auto;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 0.8rem;
+  color: #1b1f2e;
+  background: #fde997;
+  border: 2px solid #d9b84a;
+  border-radius: 8px;
   cursor: pointer;
 }
 
-.favButton[aria-pressed="true"] {
-  color: #ff4d6d;
+.favHeart {
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.favButton[aria-pressed="true"] .favHeart {
+  color: #e0245e;
 }
 
 .spriteBox {

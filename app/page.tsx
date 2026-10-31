@@ -618,15 +618,6 @@ export default function Home() {
               <div className={styles.grid}>
                 {shown.map((p) => (
                   <article key={p.key} className={styles.card}>
-                    <button
-                      type="button"
-                      className={styles.favButton}
-                      aria-label={t.favorite}
-                      aria-pressed={favorites.has(p.key)}
-                      onClick={() => toggleFavorite(p.key)}
-                    >
-                      {favorites.has(p.key) ? "♥" : "♡"}
-                    </button>
                     <div className={styles.spriteBox}>
                       {p.sprite && (
                         <Image
@@ -643,6 +634,17 @@ export default function Home() {
                           <JobIcon key={job} job={job} label={JOB_NAMES[lang][job] ?? job} />
                         ))}
                       </div>
+                      <button
+                        type="button"
+                        className={styles.favButton}
+                        aria-pressed={favorites.has(p.key)}
+                        onClick={() => toggleFavorite(p.key)}
+                      >
+                        <span>{t.favorite}</span>
+                        <span className={styles.favHeart} aria-hidden="true">
+                          {favorites.has(p.key) ? "♥" : "♡"}
+                        </span>
+                      </button>
                     </div>
 
                     <div className={styles.info}>
