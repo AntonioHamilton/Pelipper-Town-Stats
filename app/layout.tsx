@@ -7,10 +7,13 @@ const bodyFont = MedievalSharp({ weight: "400", subsets: ["latin"], variable: "-
 const titleFont = Titan_One({ weight: "400", subsets: ["latin"], variable: "--font-title" });
 
 export const metadata: Metadata = {
-  title: "Pelipper Town Stats",
+  title: "Pelipper Town Stats | Stardew Valley Mod Pokémon Stats",
   description:
-    "Stats base de todos os Pokémon do mod Pelipper Town. Base stats of every Pokémon in the Pelipper Town mod.",
+    "Pokémon stats do mod Pelipper Town para Stardew Valley: stats base de todos os Pokémon do mod, com tipos, filtros e favoritos. Base stats of every Pokémon in the Pelipper Town Stardew Valley mod.",
   keywords: [
+    "stardew valley mod pokemon",
+    "mod pokemon stats",
+    "pokemon stats",
     "Pelipper Town Pokemon Stats",
     "Pelipper Town Stats",
     "Pelipper Town Pokémon",
@@ -32,11 +35,17 @@ export const metadata: Metadata = {
     type: "website",
     url: "/",
     siteName: "Pelipper Town Stats",
+    title: "Pelipper Town Stats | Stardew Valley Mod Pokémon Stats",
+    description:
+      "Pokémon stats do mod Pelipper Town para Stardew Valley: stats base de todos os Pokémon do mod, com tipos, filtros e favoritos.",
     locale: "pt_BR",
     alternateLocale: ["en_US"],
   },
   twitter: {
     card: "summary",
+    title: "Pelipper Town Stats | Stardew Valley Mod Pokémon Stats",
+    description:
+      "Pokémon stats do mod Pelipper Town para Stardew Valley: stats base de todos os Pokémon do mod, com tipos, filtros e favoritos.",
   },
   icons: {
     icon: "/Logo.webp",
