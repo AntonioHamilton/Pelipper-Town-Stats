@@ -487,7 +487,7 @@ export default function Home() {
           </div>
         </nav>
 
-        <section className={styles.content}>
+        <div className={styles.toolbar}>
           <div className={styles.controls}>
             <div className={`${styles.field} ${styles.searchField}`}>
               <label className={styles.fieldLabel} htmlFor="pokemon-search">
@@ -528,7 +528,9 @@ export default function Home() {
             {list.length} {t.pokemonCount}
             {search ? ` ${t.foundAll}` : ""}
           </p>
+        </div>
 
+        <section className={styles.content}>
           {list.length === 0 ? (
             <div className={styles.empty}>
               <Image
