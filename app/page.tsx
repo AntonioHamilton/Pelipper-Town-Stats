@@ -50,6 +50,49 @@ const TYPE_STYLE: Record<string, { code: string; color: string }> = {
   Fairy: { code: "FAI", color: "#D685AD" },
 };
 
+const TYPE_NAMES: Record<Lang, Record<string, string>> = {
+  pt: {
+    Normal: "Normal",
+    Fire: "Fogo",
+    Water: "Água",
+    Electric: "Elétrico",
+    Grass: "Grama",
+    Ice: "Gelo",
+    Fighting: "Lutador",
+    Poison: "Veneno",
+    Ground: "Terra",
+    Flying: "Voador",
+    Psychic: "Psíquico",
+    Bug: "Inseto",
+    Rock: "Pedra",
+    Ghost: "Fantasma",
+    Dragon: "Dragão",
+    Dark: "Sombrio",
+    Steel: "Aço",
+    Fairy: "Fada",
+  },
+  en: {
+    Normal: "Normal",
+    Fire: "Fire",
+    Water: "Water",
+    Electric: "Electric",
+    Grass: "Grass",
+    Ice: "Ice",
+    Fighting: "Fighting",
+    Poison: "Poison",
+    Ground: "Ground",
+    Flying: "Flying",
+    Psychic: "Psychic",
+    Bug: "Bug",
+    Rock: "Rock",
+    Ghost: "Ghost",
+    Dragon: "Dragon",
+    Dark: "Dark",
+    Steel: "Steel",
+    Fairy: "Fairy",
+  },
+};
+
 const UI = {
   pt: {
     title: "Pelipper Town Stats",
@@ -64,12 +107,15 @@ const UI = {
     sortTotal: "Força total",
     sortAlpha: "Ordem alfabética",
     all: "Todos",
+    searchFieldLabel: "Busca",
+    typeFilterLabel: "Tipo",
+    allTypes: "Todos os tipos",
     pokemonCount: "Pokémon",
     foundAll: "encontrados em todas as abas",
     empty: "Nenhum Pokémon encontrado.",
     total: "Total",
     derivedNote: "Stats calculados a partir da forma base",
-    copyright: "Pelipper Town Stats",
+    copyright: "Chat 🤖",
     portfolio: "Portfólio",
     stats: ["HP", "Ataque", "Defesa", "Ataque Especial", "Defesa Especial", "Velocidade"],
   },
@@ -86,12 +132,15 @@ const UI = {
     sortTotal: "Total power",
     sortAlpha: "Alphabetical order",
     all: "All",
+    searchFieldLabel: "Search",
+    typeFilterLabel: "Type",
+    allTypes: "All types",
     pokemonCount: "Pokémon",
     foundAll: "found in all groups",
     empty: "No Pokémon found.",
     total: "Total",
     derivedNote: "Stats calculated from the base form",
-    copyright: "Pelipper Town Stats",
+    copyright: "Chat 🤖",
     portfolio: "Portfolio",
     stats: ["HP", "Attack", "Defense", "Sp. Attack", "Sp. Defense", "Speed"],
   },
@@ -190,6 +239,7 @@ export default function Home() {
   const [activeGroup, setActiveGroup] = useState(ALL);
   const [query, setQuery] = useState("");
   const [sortKey, setSortKey] = useState("dex");
+  const [typeFilter, setTypeFilter] = useState(ALL);
   const [page, setPage] = useState({ key: "", count: PAGE_SIZE });
   const year = useSyncExternalStore(
     noopSubscribe,
@@ -218,6 +268,14 @@ export default function Home() {
     [t],
   );
 
+  const typeOptions = useMemo(
+    () => [
+      { value: ALL, label: t.allTypes },
+      ...Object.keys(TYPE_STYLE).map((type) => ({ value: type, label: TYPE_NAMES[lang][type] })),
+    ],
+    [lang, t.allTypes],
+  );
+
   const list = useMemo(() => {
     let base: Pokemon[];
     if (search) {
@@ -232,11 +290,14 @@ export default function Home() {
     } else {
       base = data.pokemon.filter((p) => p.group === activeGroup);
     }
+    if (typeFilter !== ALL) {
+      base = base.filter((p) => p.types.includes(typeFilter));
+    }
     return [...base].sort(compareFor(sortKey, lang));
-  }, [search, activeGroup, sortKey, lang]);
+  }, [search, activeGroup, sortKey, typeFilter, lang]);
 
   // Quantos cards mostrar: volta para PAGE_SIZE sempre que o filtro/ordenação muda.
-  const filterKey = `${lang}|${activeGroup}|${search}|${sortKey}`;
+  const filterKey = `${lang}|${activeGroup}|${search}|${sortKey}|${typeFilter}`;
   const visibleCount = page.key === filterKey ? page.count : PAGE_SIZE;
   const shown = list.slice(0, visibleCount);
   const hasMore = visibleCount < list.length;
@@ -335,22 +396,37 @@ export default function Home() {
 
         <section className={styles.content}>
           <div className={styles.controls}>
-            <input
-              className={styles.search}
-              type="search"
-              placeholder={t.searchPlaceholder}
-              aria-label={t.searchLabel}
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-            />
+            <div className={`${styles.field} ${styles.searchField}`}>
+              <label className={styles.fieldLabel} htmlFor="pokemon-search">
+                {t.searchFieldLabel}
+              </label>
+              <input
+                id="pokemon-search"
+                className={styles.search}
+                type="search"
+                placeholder={t.searchPlaceholder}
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+              />
+            </div>
 
-            <div className={styles.sortLabel}>
-              <span>{t.sortLabel}</span>
+            <div className={styles.field}>
+              <span className={styles.fieldLabel}>{t.sortLabel}</span>
               <CenteredSelect
                 value={sortKey}
                 options={sortOptions}
                 onChange={setSortKey}
                 ariaLabel={t.sortLabel}
+              />
+            </div>
+
+            <div className={styles.field}>
+              <span className={styles.fieldLabel}>{t.typeFilterLabel}</span>
+              <CenteredSelect
+                value={typeFilter}
+                options={typeOptions}
+                onChange={setTypeFilter}
+                ariaLabel={t.typeFilterLabel}
               />
             </div>
           </div>

@@ -1,6 +1,12 @@
 .page {
   margin: 0;
-  padding: 24px 20px 48px;
+  padding: 24px 20px 88px;
+}
+
+@media (max-width: 899px) {
+  .page {
+    padding-bottom: 140px;
+  }
 }
 
 .topbar {
@@ -155,14 +161,13 @@
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  align-items: center;
+  align-items: flex-end;
   gap: 12px;
   margin-bottom: 12px;
 }
 
 .search {
-  flex: 1 1 260px;
-  max-width: 480px;
+  width: 100%;
   padding: 10px 14px;
   font: inherit;
   color: var(--text);
@@ -176,10 +181,19 @@
   border-color: var(--accent);
 }
 
-.sortLabel {
+.field {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.searchField {
+  flex: 1 1 260px;
+  max-width: 480px;
+}
+
+.fieldLabel {
   color: var(--muted);
   font-size: 0.9rem;
 }
@@ -253,13 +267,18 @@
 }
 
 .footer {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 50;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 16px;
-  margin-top: 32px;
-  padding: 20px 0;
+  gap: 12px;
+  padding: 12px 20px 8px;
+  background: var(--card);
   border-top: 1px solid var(--border);
   color: var(--muted);
   font-size: 0.85rem;
