@@ -106,7 +106,7 @@ const TYPE_NAMES: Record<Lang, Record<string, string>> = {
   },
 };
 
-// Tarefas que um Pokémon pode fazer no Stardew (campo `Jobs` do mod). Ícone: /icons/<tarefa minúscula>.png
+// Tarefas que um Pokémon pode fazer no Stardew (campo `Jobs` do mod). Ícone: /jobs/<tarefa minúscula>.png
 const JOB_NAMES: Record<Lang, Record<string, string>> = {
   pt: {
     Forage: "Forragear",
@@ -312,7 +312,7 @@ function JobIcon({ job, label }: { job: string; label: string }) {
         aria-label={label}
         onClick={() => setPinned((o) => !o)}
       >
-        <Image src={`/icons/${job.toLowerCase()}.png`} alt="" width={32} height={32} unoptimized />
+        <Image src={`/jobs/${job.toLowerCase()}.png`} alt="" width={32} height={32} unoptimized />
       </button>
       {open && (
         <span role="tooltip" className={styles.jobTooltip}>
