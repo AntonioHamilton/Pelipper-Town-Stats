@@ -352,6 +352,7 @@
 }
 
 .card {
+  position: relative;
   display: flex;
   gap: 16px;
   min-width: 0;
@@ -359,6 +360,23 @@
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 12px;
+}
+
+.favButton {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  padding: 0 4px;
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--muted);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.favButton[aria-pressed="true"] {
+  color: #ff4d6d;
 }
 
 .spriteBox {

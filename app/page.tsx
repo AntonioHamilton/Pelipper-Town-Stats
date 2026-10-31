@@ -162,6 +162,7 @@ const UI = {
     empty: "Nenhum Pokémon encontrado.",
     total: "Total",
     derivedNote: "Stats calculados a partir da forma base",
+    favorite: "Favoritar",
     copyright: "Chat 🤖",
     portfolio: "Portfólio",
     stats: ["HP", "Ataque", "Defesa", "Ataque Especial", "Defesa Especial", "Velocidade"],
@@ -189,6 +190,7 @@ const UI = {
     empty: "No Pokémon found.",
     total: "Total",
     derivedNote: "Stats calculated from the base form",
+    favorite: "Favorite",
     copyright: "Chat 🤖",
     portfolio: "Portfolio",
     stats: ["HP", "Attack", "Defense", "Sp. Attack", "Sp. Defense", "Speed"],
@@ -198,6 +200,44 @@ const UI = {
 const LOCALE: Record<Lang, string> = { pt: "pt-BR", en: "en-US" };
 
 const noopSubscribe = () => () => {};
+
+const FAVORITES_KEY = "pelipper-favorites";
+const FAVORITES_EVENT = "pelipper-favorites-change";
+
+function readFavorites(): string {
+  try {
+    return window.localStorage.getItem(FAVORITES_KEY) ?? "[]";
+  } catch {
+    return "[]";
+  }
+}
+
+function subscribeFavorites(onChange: () => void) {
+  window.addEventListener("storage", onChange);
+  window.addEventListener(FAVORITES_EVENT, onChange);
+  return () => {
+    window.removeEventListener("storage", onChange);
+    window.removeEventListener(FAVORITES_EVENT, onChange);
+  };
+}
+
+function parseFavorites(raw: string): Set<string> {
+  try {
+    const list: unknown = JSON.parse(raw);
+    return new Set(Array.isArray(list) ? list.filter((k) => typeof k === "string") : []);
+  } catch {
+    return new Set();
+  }
+}
+
+function saveFavorites(favorites: Set<string>) {
+  try {
+    window.localStorage.setItem(FAVORITES_KEY, JSON.stringify([...favorites]));
+  } catch {
+    // Armazenamento indisponível: o favorito não persiste nesta sessão.
+  }
+  window.dispatchEvent(new Event(FAVORITES_EVENT));
+}
 
 const totalOf = (p: Pokemon) => p.stats.reduce((a, b) => a + b, 0);
 
@@ -335,6 +375,16 @@ export default function Home() {
     () => String(new Date().getFullYear()),
     () => "",
   );
+
+  const favoritesRaw = useSyncExternalStore(subscribeFavorites, readFavorites, () => "[]");
+  const favorites = useMemo(() => parseFavorites(favoritesRaw), [favoritesRaw]);
+
+  function toggleFavorite(key: string) {
+    const next = new Set(favorites);
+    if (next.has(key)) next.delete(key);
+    else next.add(key);
+    saveFavorites(next);
+  }
 
   const t = UI[lang];
   const search = query.trim().toLowerCase();
@@ -548,6 +598,15 @@ export default function Home() {
               <div className={styles.grid}>
                 {shown.map((p) => (
                   <article key={p.key} className={styles.card}>
+                    <button
+                      type="button"
+                      className={styles.favButton}
+                      aria-label={t.favorite}
+                      aria-pressed={favorites.has(p.key)}
+                      onClick={() => toggleFavorite(p.key)}
+                    >
+                      {favorites.has(p.key) ? "♥" : "♡"}
+                    </button>
                     <div className={styles.spriteBox}>
                       {p.sprite && (
                         <Image
