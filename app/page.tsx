@@ -26,6 +26,7 @@ const data = pokemonData as { groups: Group[]; pokemon: Pokemon[] };
 
 const MAX_STAT = 255;
 const ALL = "all";
+const FAVORITES = "favorites";
 const MEGA = "mega";
 const MEGA_GROUP = "mega_evolutions";
 const PAGE_SIZE = 50;
@@ -152,6 +153,9 @@ const UI = {
     sortTotal: "Força total",
     sortAlpha: "Ordem alfabética",
     all: "Todos",
+    favorites: "Favoritos",
+    sortFavorites: "Favoritos primeiro",
+    noFavorites: "Nenhum favorito ainda.",
     searchFieldLabel: "Busca",
     typeFilterLabel: "Tipo",
     allTypes: "Todos os tipos",
@@ -180,6 +184,9 @@ const UI = {
     sortTotal: "Total power",
     sortAlpha: "Alphabetical order",
     all: "All",
+    favorites: "Favorites",
+    sortFavorites: "Favorites first",
+    noFavorites: "No favorites yet.",
     searchFieldLabel: "Search",
     typeFilterLabel: "Type",
     allTypes: "All types",
@@ -241,8 +248,15 @@ function saveFavorites(favorites: Set<string>) {
 
 const totalOf = (p: Pokemon) => p.stats.reduce((a, b) => a + b, 0);
 
-function compareFor(sortKey: string, lang: Lang): (a: Pokemon, b: Pokemon) => number {
+function compareFor(
+  sortKey: string,
+  lang: Lang,
+  favorites: Set<string>,
+): (a: Pokemon, b: Pokemon) => number {
   const byDex = (a: Pokemon, b: Pokemon) => a.dex - b.dex;
+  if (sortKey === "favorites") {
+    return (a, b) => Number(favorites.has(b.key)) - Number(favorites.has(a.key)) || byDex(a, b);
+  }
   if (sortKey === "alpha") {
     return (a, b) => a.name.localeCompare(b.name, LOCALE[lang]) || byDex(a, b);
   }
@@ -391,6 +405,7 @@ export default function Home() {
 
   const tabs = useMemo(
     () => [
+      { id: FAVORITES, label: t.favorites },
       { id: ALL, label: t.all },
       ...GENERATIONS.map((g) => ({ id: `gen-${g}`, label: `${t.generation} ${g}` })),
       { id: MEGA, label: t.megaEvolutions },
@@ -401,6 +416,7 @@ export default function Home() {
   const sortOptions = useMemo(
     () => [
       { value: "dex", label: t.sortDex },
+      { value: "favorites", label: t.sortFavorites },
       ...t.stats.map((label, i) => ({ value: `stat-${i}`, label })),
       { value: "total", label: t.sortTotal },
       { value: "alpha", label: t.sortAlpha },
@@ -427,6 +443,8 @@ export default function Home() {
       );
     } else if (activeGroup === ALL) {
       base = data.pokemon;
+    } else if (activeGroup === FAVORITES) {
+      base = data.pokemon.filter((p) => favorites.has(p.key));
     } else if (activeGroup === MEGA) {
       base = data.pokemon.filter((p) => p.group === MEGA_GROUP);
     } else {
@@ -436,8 +454,8 @@ export default function Home() {
     if (typeFilter !== ALL) {
       base = base.filter((p) => p.types.includes(typeFilter));
     }
-    return [...base].sort(compareFor(sortKey, lang));
-  }, [search, activeGroup, sortKey, typeFilter, lang]);
+    return [...base].sort(compareFor(sortKey, lang, favorites));
+  }, [search, activeGroup, sortKey, typeFilter, lang, favorites]);
 
   // Quantos cards mostrar: volta para PAGE_SIZE sempre que o filtro/ordenação muda.
   const filterKey = `${lang}|${activeGroup}|${search}|${sortKey}|${typeFilter}`;
@@ -591,7 +609,9 @@ export default function Home() {
                 height={160}
                 unoptimized
               />
-              <p className={styles.emptyText}>{t.empty}</p>
+              <p className={styles.emptyText}>
+                {activeGroup === FAVORITES && !search ? t.noFavorites : t.empty}
+              </p>
             </div>
           ) : (
             <>
