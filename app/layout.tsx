@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { MedievalSharp, Titan_One } from "next/font/google";
 import "./globals.css";
+import { SITE_URL } from "./site";
 
 const bodyFont = MedievalSharp({ weight: "400", subsets: ["latin"], variable: "--font-body" });
 const titleFont = Titan_One({ weight: "400", subsets: ["latin"], variable: "--font-title" });
@@ -23,6 +24,20 @@ export const metadata: Metadata = {
     "Pokédex stats",
     "Pokemon base stats",
   ],
+  metadataBase: new URL(SITE_URL),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    url: "/",
+    siteName: "Pelipper Town Stats",
+    locale: "pt_BR",
+    alternateLocale: ["en_US"],
+  },
+  twitter: {
+    card: "summary",
+  },
   icons: {
     icon: "/Logo.webp",
   },
