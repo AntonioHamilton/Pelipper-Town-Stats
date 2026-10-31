@@ -490,6 +490,15 @@ export default function Home() {
     <main className={styles.page}>
       <div className={styles.layout}>
         <header className={styles.brand}>
+          <div className={styles.heroRow}>
+          <Image
+            className={styles.logo}
+            src="/Logo.webp"
+            alt={t.logoAlt}
+            width={112}
+            height={112}
+            unoptimized
+          />
           <div className={styles.topbar}>
             <button
               type="button"
@@ -516,15 +525,8 @@ export default function Home() {
               </span>
             </button>
           </div>
+          </div>
 
-          <Image
-            className={styles.logo}
-            src="/Logo.webp"
-            alt={t.logoAlt}
-            width={112}
-            height={112}
-            unoptimized
-          />
           <h1 className={styles.title}>{t.title}</h1>
         </header>
 
