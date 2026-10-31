@@ -71,6 +71,7 @@ function addPokemon(entry) {
     types: entry.types,
     sprite,
     stats: entry.stats,
+    jobs: entry.jobs ?? [],
     ...(entry.derived ? { derived: true } : {}),
   });
 }
@@ -93,6 +94,7 @@ for (const { groupId, doc } of docs) {
       types: sp.Types ?? [],
       portraitPath: sp.PortraitPath,
       stats: STAT_KEYS.map((k) => sp.BaseStats[k]),
+      jobs: sp.Jobs ?? [],
     });
   }
 }
@@ -125,6 +127,7 @@ for (const { groupId, doc } of docs) {
         Math.round(s.SpecialDefense * battle),
         Math.round(s.Speed * battle),
       ],
+      jobs: form.Jobs ?? base.Jobs ?? [],
       derived: true,
     });
   }
