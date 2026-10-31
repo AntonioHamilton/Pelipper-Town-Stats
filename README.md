@@ -1,36 +1,80 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pelipper Town Stats
 
-## Getting Started
+Site com as stats base de todos os Pokémon do mod **Pelipper Town** para Stardew Valley. Dá para filtrar por geração e grupo, buscar por nome ou número, ordenar, marcar favoritos e ver as tarefas (jobs) que cada Pokémon faz no jogo.
 
-First, run the development server:
+Acesse: https://pelipper-town-stats.vercel.app
+
+## Funcionalidades
+
+### Troca de idioma
+
+Os botões de bandeira alternam a interface entre português (Brasil) e inglês.
+
+![Troca de idioma](docs/gifs/idioma.gif)
+
+### Busca
+
+Busque pelo nome ou pelo número da Pokédex. A lista filtra enquanto você digita.
+
+![Busca](docs/gifs/busca.gif)
+
+### Grupos
+
+A lateral separa os Pokémon por geração e por grupos especiais, como formas de Alola, Mega Evoluções e rivais elementais.
+
+![Grupos](docs/gifs/grupos.gif)
+
+### Ordenação e filtro por tipo
+
+Ordene por número da Pokédex, força total, ordem alfabética, favoritos ou por um stat específico. O filtro de tipo mostra só os Pokémon de um tipo.
+
+![Ordenação e filtro por tipo](docs/gifs/filtros-ordenacao.gif)
+
+### Favoritos
+
+Clique em **Favoritar** em um card para salvar. Os favoritos ficam salvos no navegador e podem ser usados como ordenação ou como grupo na lateral.
+
+![Favoritos](docs/gifs/favoritos.gif)
+
+### Tarefas (jobs)
+
+Cada card mostra os ícones das tarefas do Pokémon no jogo. Passe o mouse sobre um ícone para ver o nome da tarefa.
+
+![Tarefas](docs/gifs/tarefas.gif)
+
+## Rodando localmente
+
+Requisitos: Node.js 20 ou mais recente.
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Abra http://localhost:3000.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Atualizando os dados
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Os dados ficam em `app/data/pokemon.json`. Para gerar esse arquivo de novo a partir da pasta do mod instalado no Steam:
 
-## Learn More
+```bash
+npm run data
+```
 
-To learn more about Next.js, take a look at the following resources:
+O script `scripts/build-data.mjs` aceita o caminho da pasta `assets/data` do mod como argumento. Sem argumento, ele usa o caminho padrão do Steam no Windows.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Stack
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [Next.js](https://nextjs.org) 16 com React 19
+- TypeScript
+- CSS Modules
 
-## Deploy on Vercel
+## Scripts
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Comando | O que faz |
+| --- | --- |
+| `npm run dev` | Sobe o servidor de desenvolvimento |
+| `npm run build` | Gera a build de produção |
+| `npm run start` | Sobe a build de produção |
+| `npm run lint` | Roda o ESLint |
+| `npm run data` | Regenera `app/data/pokemon.json` a partir do mod |
