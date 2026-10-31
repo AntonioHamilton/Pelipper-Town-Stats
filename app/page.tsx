@@ -167,6 +167,7 @@ const UI = {
     total: "Total",
     derivedNote: "Stats calculados a partir da forma base",
     favorite: "Favoritar",
+    unfavorite: "Desfavoritar",
     copyright: "Chat 🤖",
     portfolio: "Portfólio",
     stats: ["HP", "Ataque", "Defesa", "Ataque Especial", "Defesa Especial", "Velocidade"],
@@ -198,6 +199,7 @@ const UI = {
     total: "Total",
     derivedNote: "Stats calculated from the base form",
     favorite: "Favorite",
+    unfavorite: "Unfavorite",
     copyright: "Chat 🤖",
     portfolio: "Portfolio",
     stats: ["HP", "Attack", "Defense", "Sp. Attack", "Sp. Defense", "Speed"],
@@ -640,10 +642,20 @@ export default function Home() {
                         aria-pressed={favorites.has(p.key)}
                         onClick={() => toggleFavorite(p.key)}
                       >
-                        <span>{t.favorite}</span>
-                        <span className={styles.favHeart} aria-hidden="true">
-                          {favorites.has(p.key) ? "♥" : "♡"}
-                        </span>
+                        <span>{favorites.has(p.key) ? t.unfavorite : t.favorite}</span>
+                        <svg
+                          className={styles.favHeart}
+                          viewBox="0 0 24 24"
+                          width="18"
+                          height="18"
+                          fill={favorites.has(p.key) ? "currentColor" : "none"}
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M12 21s-7.5-4.6-9.6-9.1C.9 8.6 2.6 5 6.2 5c2.2 0 3.5 1.2 4.3 2.5C11.3 6.2 12.6 5 14.8 5c3.6 0 5.3 3.6 3.8 6.9C19.5 16.4 12 21 12 21z" />
+                        </svg>
                       </button>
                     </div>
 

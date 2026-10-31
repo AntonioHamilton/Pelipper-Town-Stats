@@ -379,8 +379,7 @@
 }
 
 .favHeart {
-  font-size: 1.1rem;
-  line-height: 1;
+  flex: 0 0 auto;
 }
 
 .favButton[aria-pressed="true"] .favHeart {
