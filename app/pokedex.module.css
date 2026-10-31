@@ -555,17 +555,22 @@
   }
 }
 
-@media (max-width: 899px) {
+@media (max-width: 992px) {
   .controls {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 12px;
   }
 
-  .searchField,
-  .groupField {
+  .searchField {
     grid-column: 1 / -1;
     max-width: none;
+  }
+}
+
+@media (max-width: 899px) {
+  .groupField {
+    grid-column: 1 / -1;
   }
 
   .dropdownButton {
