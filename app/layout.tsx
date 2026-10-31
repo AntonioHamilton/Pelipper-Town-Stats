@@ -40,12 +40,14 @@ export const metadata: Metadata = {
       "Pokémon stats do mod Pelipper Town para Stardew Valley: stats base de todos os Pokémon do mod, com tipos, filtros e favoritos.",
     locale: "pt_BR",
     alternateLocale: ["en_US"],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Pelipper Town Stats" }],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Pelipper Town Stats | Stardew Valley Mod Pokémon Stats",
     description:
       "Pokémon stats do mod Pelipper Town para Stardew Valley: stats base de todos os Pokémon do mod, com tipos, filtros e favoritos.",
+    images: ["/og.png"],
   },
   icons: {
     icon: "/Logo.webp",
