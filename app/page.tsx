@@ -739,6 +739,7 @@ export default function Home() {
             <LinkedinIcon className={styles.icon} />
           </a>
           <a
+            className={styles.githubLink}
             href="https://github.com/AntonioHamilton"
             target="_blank"
             rel="noopener noreferrer"
