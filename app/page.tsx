@@ -25,7 +25,19 @@ const data = pokemonData as { groups: Group[]; pokemon: Pokemon[] };
 
 const MAX_STAT = 255;
 const ALL = "all";
+const MEGA = "mega";
+const MEGA_GROUP = "mega_evolutions";
 const PAGE_SIZE = 50;
+
+// Primeiro número da Pokédex de cada geração, da 1 à 9.
+const GEN_FIRST_DEX = [1, 152, 252, 387, 494, 650, 722, 810, 906];
+
+function generationOf(dex: number): number {
+  return GEN_FIRST_DEX.filter((first) => dex >= first).length;
+}
+
+const LAST_GENERATION = generationOf(Math.max(...data.pokemon.map((p) => p.dex)));
+const GENERATIONS = Array.from({ length: LAST_GENERATION }, (_, i) => i + 1);
 
 const STAT_COLORS = ["#cc0000", "#ff7f0f", "#ff7f0f", "#f7bc0b", "#f7bc0b", "#3194f7"];
 
@@ -110,6 +122,8 @@ const UI = {
     searchFieldLabel: "Busca",
     typeFilterLabel: "Tipo",
     allTypes: "Todos os tipos",
+    generation: "Geração",
+    megaEvolutions: "Mega evoluções",
     pokemonCount: "Pokémon",
     foundAll: "encontrados em todas as abas",
     empty: "Nenhum Pokémon encontrado.",
@@ -135,6 +149,8 @@ const UI = {
     searchFieldLabel: "Search",
     typeFilterLabel: "Type",
     allTypes: "All types",
+    generation: "Generation",
+    megaEvolutions: "Mega evolutions",
     pokemonCount: "Pokémon",
     foundAll: "found in all groups",
     empty: "No Pokémon found.",
@@ -253,9 +269,10 @@ export default function Home() {
   const tabs = useMemo(
     () => [
       { id: ALL, label: t.all },
-      ...data.groups.map((g) => ({ id: g.id, label: g.label[lang] })),
+      ...GENERATIONS.map((g) => ({ id: `gen-${g}`, label: `${t.generation} ${g}` })),
+      { id: MEGA, label: t.megaEvolutions },
     ],
-    [lang, t.all],
+    [t],
   );
 
   const sortOptions = useMemo(
@@ -287,8 +304,11 @@ export default function Home() {
       );
     } else if (activeGroup === ALL) {
       base = data.pokemon;
+    } else if (activeGroup === MEGA) {
+      base = data.pokemon.filter((p) => p.group === MEGA_GROUP);
     } else {
-      base = data.pokemon.filter((p) => p.group === activeGroup);
+      const gen = Number(activeGroup.slice("gen-".length));
+      base = data.pokemon.filter((p) => generationOf(p.dex) === gen);
     }
     if (typeFilter !== ALL) {
       base = base.filter((p) => p.types.includes(typeFilter));
