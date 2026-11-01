@@ -192,11 +192,12 @@
   margin: 0 auto;
 }
 
-.evoStack {
+.evoMega {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 12px;
+  margin-top: 16px;
 }
 
 .megaCard {

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import pokemonData from "../data/pokemon.json";
 import { STAT_COLORS, TYPE_STYLE } from "../labels";
@@ -65,31 +66,22 @@ async function megaFormsByBase(): Promise<Record<string, MegaForm[]>> {
   return byBase;
 }
 
-function EvoBranch({ node, megas }: { node: EvoNode; megas: Record<string, MegaForm[]> }) {
+function EvoBranch({ node }: { node: EvoNode }) {
   const current = pokemon.find((p) => p.key === node.key);
   return (
     <div className={styles.evoNode}>
-      <div className={styles.evoStack}>
-        <Link href={`/${node.key}`} className={styles.evoCard} aria-label={node.namePt ?? node.name}>
-          {current?.sprite && (
-            <Image src={current.sprite} alt="" width={64} height={64} unoptimized />
-          )}
-          <span>{node.namePt ?? node.name}</span>
-        </Link>
-        {(megas[node.key] ?? []).map((m) => (
-          <Link key={m.key} href={`/${m.key}`} className={styles.megaCard} aria-label={m.name}>
-            <span className={styles.megaLabel}>Mega evolução</span>
-            {m.sprite && <Image src={m.sprite} alt="" width={64} height={64} unoptimized />}
-            <span>{m.name}</span>
-          </Link>
-        ))}
-      </div>
+      <Link href={`/${node.key}`} className={styles.evoCard} aria-label={node.namePt ?? node.name}>
+        {current?.sprite && (
+          <Image src={current.sprite} alt="" width={64} height={64} unoptimized />
+        )}
+        <span>{node.namePt ?? node.name}</span>
+      </Link>
       {node.to.length > 0 && (
         <div className={styles.evoBranches}>
           {node.to.map((edge) => (
             <div key={edge.node.key} className={styles.evoEdge}>
               <span className={styles.evoCondition}>{describeConditions(edge.conditions)}</span>
-              <EvoBranch node={edge.node} megas={megas} />
+              <EvoBranch node={edge.node} />
             </div>
           ))}
         </div>
@@ -98,7 +90,12 @@ function EvoBranch({ node, megas }: { node: EvoNode; megas: Record<string, MegaF
   );
 }
 
-export default async function SpeciesPage({ params }: PageProps) {
+// Mega de toda a família da árvore, mostradas centralizadas abaixo dela.
+function collectMegas(node: EvoNode, megas: Record<string, MegaForm[]>): MegaForm[] {
+  return [...(megas[node.key] ?? []), ...node.to.flatMap((e) => collectMegas(e.node, megas))];
+}
+
+async function SpeciesContent({ params }: PageProps) {
   const { slug } = await params;
   const species = await loadSpecies(slug);
   if (!species) notFound();
@@ -106,6 +103,7 @@ export default async function SpeciesPage({ params }: PageProps) {
   const base = pokemon.find((p) => p.key === slug);
   const megas = await megaFormsByBase();
   const megaForms = megas[species.key] ?? [];
+  const familyMegas = collectMegas(species.evolutions.tree, megas);
   const faq = faqFor(species, megaForms);
   const enc = species.encounter;
   const number = `#${String(species.dex).padStart(3, "0")}`;
@@ -138,11 +136,6 @@ export default async function SpeciesPage({ params }: PageProps) {
                 </span>
               ))}
             </div>
-            {species.derivedFrom && (
-              <p className={styles.note}>
-                Forma de <Link href={`/${species.derivedFrom}`}>{species.derivedFrom}</Link>.
-              </p>
-            )}
             {(species.descriptionPt ?? species.description) && (
               <p className={styles.description}>{species.descriptionPt ?? species.description}</p>
             )}
@@ -206,16 +199,43 @@ export default async function SpeciesPage({ params }: PageProps) {
 
         <section className={styles.card} aria-labelledby="evo">
           <h2 id="evo">Evoluções</h2>
-          {species.evolutions.tree.to.length || species.evolutions.from.length || megaForms.length ? (
+          {species.evolutions.tree.to.length || species.evolutions.from.length || familyMegas.length ? (
             <div className={styles.evoRoot}>
               <div className={styles.evoCenter}>
-                <EvoBranch node={species.evolutions.tree} megas={megas} />
+                <EvoBranch node={species.evolutions.tree} />
+                {familyMegas.length > 0 && (
+                  <div className={styles.evoMega}>
+                    {familyMegas.map((m) => (
+                      <Link key={m.key} href={`/${m.key}`} className={styles.megaCard} aria-label={m.name}>
+                        <span className={styles.megaLabel}>Mega evolução</span>
+                        {m.sprite && <Image src={m.sprite} alt="" width={64} height={64} unoptimized />}
+                        <span>{m.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
               </div>
             </div>
           ) : (
             <p className={styles.muted}>Este Pokémon não evolui.</p>
           )}
         </section>
+
+        {species.key.startsWith("mega-") && (
+          <section className={styles.card} aria-labelledby="mega-req">
+            <h2 id="mega-req">Como fazer a Mega evolução</h2>
+            <ul className={styles.list}>
+              <li>Ter um Pokémon no nível 50: o prefeito Lewis envia a receita da Mega Band.</li>
+              <li>Receita: 1 Barra de Irídio e 1 Fragmento Prismático.</li>
+              <li>Ter a Mega Band e colocar o Pokémon compatível como parceiro ativo.</li>
+              <li>Segurar a Mega Band e apertar Ação.</li>
+              <li>Uma Mega evolução por fazendeiro por dia, até a hora de dormir ou até o Pokémon desmaiar.</li>
+              <li>Só um parceiro pode estar em Mega ao mesmo tempo.</li>
+              <li>Efeitos: +25% de vida e status máximos, +15% de velocidade no campo e passiva com força 1,5x.</li>
+            </ul>
+            <p className={styles.muted}>Regras do guia do jogador do mod. Os nomes dos itens em português são traduções próprias, a confirmar.</p>
+          </section>
+        )}
 
         <section className={styles.card} aria-labelledby="moves">
           <h2 id="moves">Golpes aprendidos por nível</h2>
@@ -410,5 +430,13 @@ export default async function SpeciesPage({ params }: PageProps) {
         <SiteFooter lang="pt" copyright="Chat 🤖" portfolio="Portfólio" />
       </div>
     </main>
+  );
+}
+
+export default function SpeciesPage(props: PageProps) {
+  return (
+    <Suspense fallback={<main className={styles.page} />}>
+      <SpeciesContent {...props} />
+    </Suspense>
   );
 }
