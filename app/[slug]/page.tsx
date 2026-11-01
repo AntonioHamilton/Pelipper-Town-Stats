@@ -5,7 +5,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import pokemonData from "../data/pokemon.json";
 import { STAT_COLORS, TYPE_STYLE } from "../labels";
-import { ParallaxBackground } from "../parallax-background";
+import { DriftingBackground } from "../drifting-background";
 import { SiteFooter } from "../site-footer";
 import {
   type EvoNode,
@@ -111,7 +111,7 @@ async function SpeciesContent({ params }: PageProps) {
 
   return (
     <main className={styles.page}>
-      <ParallaxBackground src={`/backgrounds/${species.types[0] ?? "Normal"}.webp`} />
+      <DriftingBackground src={`/backgrounds/${species.types[0] ?? "Normal"}.webp`} />
       <div className={styles.container}>
         <Link href="/" className={styles.back}>
           ‹ Todos os Pokémon

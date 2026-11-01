@@ -359,7 +359,7 @@
   image-rendering: pixelated;
 }
 
-.parallaxLayer {
+.driftLayer {
   position: fixed;
   inset: 0;
   z-index: 0;
@@ -367,13 +367,46 @@
   pointer-events: none;
 }
 
-.parallaxImage {
+.driftLayer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(rgba(12, 14, 24, 0.35), rgba(12, 14, 24, 0.55));
+}
+
+.driftTrack {
   position: absolute;
   top: 0;
-  right: 0;
   left: 0;
-  height: 125vh;
+  height: 100%;
+  display: flex;
+  width: max-content;
+  animation: drift 120s linear infinite;
+}
+
+.driftSegment {
+  flex: none;
+  height: 100%;
+  aspect-ratio: 2047 / 1151;
   background-size: cover;
-  background-position: center top;
-  will-change: transform;
+  background-position: center;
+}
+
+.driftFlipped {
+  transform: scaleX(-1);
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .driftTrack {
+    animation: none;
+  }
 }
