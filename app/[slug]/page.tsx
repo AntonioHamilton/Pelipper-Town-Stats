@@ -4,7 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import pokemonData from "../data/pokemon.json";
 import { STAT_COLORS, TYPE_STYLE } from "../labels";
-import { SITE_URL } from "../site";
+import { SiteFooter } from "../site-footer";
 import {
   type EvoNode,
   describeConditions,
@@ -46,22 +46,50 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
-function EvoBranch({ node }: { node: EvoNode }) {
+type MegaForm = { key: string; name: string; sprite: string | undefined };
+
+// Formas Mega agrupadas pela espécie base (ex.: "charizard" -> Mega Charizard X/Y).
+async function megaFormsByBase(): Promise<Record<string, MegaForm[]>> {
+  const megas = await Promise.all(
+    pokemon
+      .filter((p) => p.derived && p.key.startsWith("mega-"))
+      .map(async (p) => {
+        const sp = await loadSpecies(p.key);
+        return { base: sp?.derivedFrom ?? null, key: p.key, name: sp?.namePt ?? p.name, sprite: p.sprite };
+      }),
+  );
+  const byBase: Record<string, MegaForm[]> = {};
+  for (const m of megas) {
+    if (m.base) (byBase[m.base] ??= []).push({ key: m.key, name: m.name, sprite: m.sprite });
+  }
+  return byBase;
+}
+
+function EvoBranch({ node, megas }: { node: EvoNode; megas: Record<string, MegaForm[]> }) {
   const current = pokemon.find((p) => p.key === node.key);
   return (
     <div className={styles.evoNode}>
-      <Link href={`/${node.key}`} className={styles.evoCard} aria-label={node.namePt ?? node.name}>
-        {current?.sprite && (
-          <Image src={current.sprite} alt="" width={64} height={64} unoptimized />
-        )}
-        <span>{node.namePt ?? node.name}</span>
-      </Link>
+      <div className={styles.evoStack}>
+        <Link href={`/${node.key}`} className={styles.evoCard} aria-label={node.namePt ?? node.name}>
+          {current?.sprite && (
+            <Image src={current.sprite} alt="" width={64} height={64} unoptimized />
+          )}
+          <span>{node.namePt ?? node.name}</span>
+        </Link>
+        {(megas[node.key] ?? []).map((m) => (
+          <Link key={m.key} href={`/${m.key}`} className={styles.megaCard} aria-label={m.name}>
+            <span className={styles.megaLabel}>Mega evolução</span>
+            {m.sprite && <Image src={m.sprite} alt="" width={64} height={64} unoptimized />}
+            <span>{m.name}</span>
+          </Link>
+        ))}
+      </div>
       {node.to.length > 0 && (
         <div className={styles.evoBranches}>
           {node.to.map((edge) => (
             <div key={edge.node.key} className={styles.evoEdge}>
               <span className={styles.evoCondition}>{describeConditions(edge.conditions)}</span>
-              <EvoBranch node={edge.node} />
+              <EvoBranch node={edge.node} megas={megas} />
             </div>
           ))}
         </div>
@@ -76,15 +104,8 @@ export default async function SpeciesPage({ params }: PageProps) {
   if (!species) notFound();
 
   const base = pokemon.find((p) => p.key === slug);
-  const megaForms = await Promise.all(
-    pokemon
-      .filter(
-        (p) =>
-          p.derived &&
-          (p.key === `mega-${species.key}` || p.key.startsWith(`mega-${species.key}-`)),
-      )
-      .map(async (p) => ({ key: p.key, name: (await loadSpecies(p.key))?.namePt ?? p.name, sprite: p.sprite })),
-  );
+  const megas = await megaFormsByBase();
+  const megaForms = megas[species.key] ?? [];
   const faq = faqFor(species, megaForms);
   const enc = species.encounter;
   const number = `#${String(species.dex).padStart(3, "0")}`;
@@ -188,20 +209,7 @@ export default async function SpeciesPage({ params }: PageProps) {
           {species.evolutions.tree.to.length || species.evolutions.from.length || megaForms.length ? (
             <div className={styles.evoRoot}>
               <div className={styles.evoCenter}>
-                <EvoBranch node={species.evolutions.tree} />
-                {megaForms.length > 0 && (
-                  <div className={styles.evoMega}>
-                    {megaForms.map((m) => (
-                      <div key={m.key} className={styles.evoEdge}>
-                        <span className={styles.evoCondition}>Mega evolução</span>
-                        <Link href={`/${m.key}`} className={styles.evoCard} aria-label={m.name}>
-                          {m.sprite && <Image src={m.sprite} alt="" width={64} height={64} unoptimized />}
-                          <span>{m.name}</span>
-                        </Link>
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <EvoBranch node={species.evolutions.tree} megas={megas} />
               </div>
             </div>
           ) : (
@@ -399,11 +407,7 @@ export default async function SpeciesPage({ params }: PageProps) {
           </p>
         </section>
 
-        <p className={styles.footer}>
-          <Link href="/">← Voltar para todos os Pokémon</Link>
-          <span> · </span>
-          <a href={`${SITE_URL}/${species.key}`}>Link deste Pokémon</a>
-        </p>
+        <SiteFooter lang="pt" copyright="Chat 🤖" portfolio="Portfólio" />
       </div>
     </main>
   );

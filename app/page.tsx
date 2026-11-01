@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import styles from "./pokedex.module.css";
 import pokemonData from "./data/pokemon.json";
-import { EmailIcon, GithubIcon, LinkedinIcon } from "./Icons";
+import { SiteFooter } from "./site-footer";
 import { JOB_NAMES, Lang, STAT_COLORS, TYPE_NAMES, TYPE_STYLE } from "./labels";
 
 
@@ -113,7 +113,6 @@ const UI = {
 
 const LOCALE: Record<Lang, string> = { pt: "pt-BR", en: "en-US" };
 
-const noopSubscribe = () => () => {};
 
 const FAVORITES_KEY = "pelipper-favorites";
 const FAVORITES_EVENT = "pelipper-favorites-change";
@@ -296,11 +295,6 @@ export default function Home() {
   const [sortKey, setSortKey] = useState("dex");
   const [typeFilter, setTypeFilter] = useState(ALL);
   const [page, setPage] = useState({ key: "", count: PAGE_SIZE });
-  const year = useSyncExternalStore(
-    noopSubscribe,
-    () => String(new Date().getFullYear()),
-    () => "",
-  );
 
   const favoritesRaw = useSyncExternalStore(subscribeFavorites, readFavorites, () => "[]");
   const favorites = useMemo(() => parseFavorites(favoritesRaw), [favoritesRaw]);
@@ -621,41 +615,7 @@ export default function Home() {
         </section>
       </div>
 
-      <footer className={styles.footer}>
-        <p className={styles.copyright}>
-          {t.copyright} {year}
-        </p>
-        <a
-          className={styles.portfolioLink}
-          href={`https://chat-hamilton.vercel.app/?language=${lang}`}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          ← {t.portfolio}
-        </a>
-        <div className={styles.socials}>
-          <a
-            href="https://www.linkedin.com/in/antonio-hamilton/"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="LinkedIn"
-          >
-            <LinkedinIcon className={styles.icon} />
-          </a>
-          <a
-            className={styles.githubLink}
-            href="https://github.com/AntonioHamilton"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="GitHub"
-          >
-            <GithubIcon className={styles.icon} />
-          </a>
-          <a href="mailto:antoniohamilton.s.freitas@gmail.com" aria-label="Email">
-            <EmailIcon className={styles.icon} />
-          </a>
-        </div>
-      </footer>
+      <SiteFooter lang={lang} copyright={t.copyright} portfolio={t.portfolio} />
     </main>
   );
 }
