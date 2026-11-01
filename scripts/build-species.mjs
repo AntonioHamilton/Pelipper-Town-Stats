@@ -127,6 +127,7 @@ function conditionValueName(c) {
 function evolutionsOf(sp) {
   return (sp.Evolutions ?? []).map((e) => ({
     targetKey: defaultKeyById.get(e.SpeciesId) ?? e.SpeciesId,
+    targetName: species.get(defaultKeyById.get(e.SpeciesId) ?? e.SpeciesId)?.sp.DisplayName ?? e.SpeciesId,
     conditions: (e.Conditions ?? []).map((c) => ({
       kind: c.Kind,
       value: c.Value ?? null,
