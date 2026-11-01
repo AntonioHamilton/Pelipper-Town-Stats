@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import styles from "./pokedex.module.css";
 import pokemonData from "./data/pokemon.json";
@@ -529,6 +530,7 @@ export default function Home() {
               <div className={styles.grid}>
                 {shown.map((p) => (
                   <article key={p.key} className={styles.card}>
+                    <Link href={`/${p.key}`} className={styles.cardLink} aria-label={p.name} />
                     <div className={styles.spriteBox}>
                       {p.sprite && (
                         <Image
