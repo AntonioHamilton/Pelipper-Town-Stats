@@ -62,16 +62,52 @@ for (const { groupId, doc } of docs) {
 const weights = fs.existsSync(weightsPath) ? JSON.parse(fs.readFileSync(weightsPath, "utf8")) : {};
 const itemNames = fs.existsSync(itemNamesPath) ? JSON.parse(fs.readFileSync(itemNamesPath, "utf8")) : {};
 
+const i18nDir = path.join(root, "scripts", "i18n");
+const readI18n = (file) => JSON.parse(fs.readFileSync(path.join(i18nDir, file), "utf8"));
+const speciesNamesPt = readI18n("species-names.json");
+const movesPt = readI18n("moves.json");
+const abilitiesPt = readI18n("abilities.json");
+const descriptionsPt = {};
+const descDir = path.join(i18nDir, "descriptions");
+for (const file of fs.readdirSync(descDir).filter((f) => f.endsWith(".json")).sort()) {
+  Object.assign(descriptionsPt, JSON.parse(fs.readFileSync(path.join(descDir, file), "utf8")));
+}
+
+// Formas (Alola, Galar, Hisui, Mega) recebem o nome traduzido da espécie base.
+const REGIONAL = [
+  [/^Alolan (.+)$/, (b) => `${b} de Alola`],
+  [/^Galarian (.+)$/, (b) => `${b} de Galar`],
+  [/^Hisuian (.+)$/, (b) => `${b} de Hisui`],
+  [/^Paldean (.+)$/, (b) => `${b} de Paldea`],
+  [/^Mega (.+?)( X| Y)?$/, (b, suffix = "") => `Mega ${b}${suffix}`],
+  [/^Origin (.+)$/, (b) => `${b} Forma Origem`],
+  [/^Primal (.+)$/, (b) => `${b} Forma Primal`],
+];
+
+function speciesNamePt(en) {
+  if (!en) return null;
+  if (speciesNamesPt[en]) return speciesNamesPt[en];
+  for (const [re, build] of REGIONAL) {
+    const m = en.match(re);
+    if (!m) continue;
+    const base = speciesNamesPt[m[1]];
+    if (base) return build(base, m[2]);
+  }
+  return null;
+}
+
 function itemNameOf(itemId) {
   return itemNames[itemId] ?? null;
 }
 
 function moveView(learn) {
   const m = moves.get(learn.MoveId);
+  const en = m?.DisplayName ?? learn.MoveId;
   return {
     level: learn.Level,
     id: learn.MoveId,
-    name: m?.DisplayName ?? learn.MoveId,
+    name: en,
+    namePt: movesPt[en] ?? null,
     type: m?.Type ?? null,
     category: m?.Category ?? null,
     power: m?.Power ?? null,
@@ -80,7 +116,14 @@ function moveView(learn) {
 
 function abilityView(id) {
   const a = abilities.get(id);
-  return { id, name: a?.DisplayName ?? id, description: a?.Description ?? null };
+  const en = a?.DisplayName ?? id;
+  return {
+    id,
+    name: en,
+    namePt: abilitiesPt[en]?.name ?? null,
+    description: a?.Description ?? null,
+    descriptionPt: abilitiesPt[en]?.description ?? null,
+  };
 }
 
 function encounterView(enc) {
@@ -128,6 +171,7 @@ function evolutionsOf(sp) {
   return (sp.Evolutions ?? []).map((e) => ({
     targetKey: defaultKeyById.get(e.SpeciesId) ?? e.SpeciesId,
     targetName: species.get(defaultKeyById.get(e.SpeciesId) ?? e.SpeciesId)?.sp.DisplayName ?? e.SpeciesId,
+    targetNamePt: speciesNamePt(species.get(defaultKeyById.get(e.SpeciesId) ?? e.SpeciesId)?.sp.DisplayName),
     conditions: (e.Conditions ?? []).map((c) => ({
       kind: c.Kind,
       value: c.Value ?? null,
@@ -142,7 +186,7 @@ function evolutionsOf(sp) {
 function buildTree(key, visited = new Set()) {
   const entry = species.get(key);
   const name = entry?.sp.DisplayName ?? key;
-  const node = { key, name, to: [] };
+  const node = { key, name, namePt: speciesNamePt(entry?.sp.DisplayName), to: [] };
   if (visited.has(key)) return node;
   visited.add(key);
   for (const evo of evolutionsOf(entry?.sp ?? {})) {
@@ -178,7 +222,7 @@ function detailsFor(key, sp, groupId, baseSp, derivedFrom) {
   const from = [];
   for (const [otherKey, entry] of species) {
     for (const evo of evolutionsOf(entry.sp)) {
-      if (evo.targetKey === (derivedFrom ?? key)) from.push({ key: otherKey, name: entry.sp.DisplayName, conditions: evo.conditions });
+      if (evo.targetKey === (derivedFrom ?? key)) from.push({ key: otherKey, name: entry.sp.DisplayName, namePt: speciesNamePt(entry.sp.DisplayName), conditions: evo.conditions });
     }
   }
 
@@ -186,7 +230,9 @@ function detailsFor(key, sp, groupId, baseSp, derivedFrom) {
     key,
     dex: sp.NationalDex,
     name: sp.DisplayName,
+    namePt: speciesNamePt(sp.DisplayName),
     description: source.Description ?? null,
+    descriptionPt: descriptionsPt[source.Description] ?? null,
     generation: source.Generation ?? null,
     group: groupId,
     types: sp.Types ?? source.Types ?? [],

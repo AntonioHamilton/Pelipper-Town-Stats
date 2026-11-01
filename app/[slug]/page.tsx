@@ -34,8 +34,9 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const { slug } = await params;
   const species = await loadSpecies(slug);
   if (!species) return { robots: { index: false, follow: false } };
-  const title = `${species.name} (#${String(species.dex).padStart(3, "0")}) | Pelipper Town Stats`;
-  const description = `${species.name} no mod Pelipper Town para Stardew Valley: tipo, golpes por nível, evolução, drops, onde encontrar e tarefas.`;
+  const nome = species.namePt ?? species.name;
+  const title = `${nome} (#${String(species.dex).padStart(3, "0")}) | Pelipper Town Stats`;
+  const description = `${nome} no mod Pelipper Town para Stardew Valley: tipo, golpes por nível, evolução, drops, onde encontrar e tarefas.`;
   return {
     title,
     description,
@@ -49,11 +50,11 @@ function EvoBranch({ node }: { node: EvoNode }) {
   const current = pokemon.find((p) => p.key === node.key);
   return (
     <div className={styles.evoNode}>
-      <Link href={`/${node.key}`} className={styles.evoCard} aria-label={node.name}>
+      <Link href={`/${node.key}`} className={styles.evoCard} aria-label={node.namePt ?? node.name}>
         {current?.sprite && (
           <Image src={current.sprite} alt="" width={64} height={64} unoptimized />
         )}
-        <span>{node.name}</span>
+        <span>{node.namePt ?? node.name}</span>
       </Link>
       {node.to.length > 0 && (
         <div className={styles.evoBranches}>
@@ -75,9 +76,11 @@ export default async function SpeciesPage({ params }: PageProps) {
   if (!species) notFound();
 
   const base = pokemon.find((p) => p.key === slug);
-  const megaForms = pokemon
-    .filter((p) => p.derived && p.key.startsWith("mega-") && p.key.startsWith(`mega-${species.key}-`))
-    .map((p) => ({ key: p.key, name: p.name }));
+  const megaForms = await Promise.all(
+    pokemon
+      .filter((p) => p.derived && p.key.startsWith("mega-") && p.key.startsWith(`mega-${species.key}-`))
+      .map(async (p) => ({ key: p.key, name: (await loadSpecies(p.key))?.namePt ?? p.name })),
+  );
   const faq = faqFor(species, megaForms);
   const enc = species.encounter;
   const number = `#${String(species.dex).padStart(3, "0")}`;
@@ -94,7 +97,7 @@ export default async function SpeciesPage({ params }: PageProps) {
             <Image
               className={styles.sprite}
               src={base.sprite}
-              alt={species.name}
+              alt={species.namePt ?? species.name}
               width={160}
               height={160}
               unoptimized
@@ -102,7 +105,7 @@ export default async function SpeciesPage({ params }: PageProps) {
           )}
           <div className={styles.heroText}>
             <p className={styles.number}>{number}</p>
-            <h1 className={styles.title}>{species.name}</h1>
+            <h1 className={styles.title}>{species.namePt ?? species.name}</h1>
             <div className={styles.types}>
               {species.types.map((t) => (
                 <span key={t} className={styles.type} style={{ background: TYPE_STYLE[t]?.color }}>
@@ -115,7 +118,9 @@ export default async function SpeciesPage({ params }: PageProps) {
                 Forma de <Link href={`/${species.derivedFrom}`}>{species.derivedFrom}</Link>.
               </p>
             )}
-            {species.description && <p className={styles.description}>{species.description}</p>}
+            {(species.descriptionPt ?? species.description) && (
+              <p className={styles.description}>{species.descriptionPt ?? species.description}</p>
+            )}
           </div>
         </header>
 
@@ -197,7 +202,7 @@ export default async function SpeciesPage({ params }: PageProps) {
                   {species.moves.map((m, i) => (
                     <tr key={`${m.id}-${m.level}-${i}`}>
                       <td>{m.level}</td>
-                      <td>{m.name}</td>
+                      <td>{m.namePt ?? m.name}</td>
                       <td>
                         {m.type && (
                           <span className={styles.typeSmall} style={{ background: TYPE_STYLE[m.type]?.color }}>
@@ -223,8 +228,10 @@ export default async function SpeciesPage({ params }: PageProps) {
             <ul className={styles.list}>
               {species.abilities.map((a) => (
                 <li key={a.id}>
-                  <strong>{a.name}</strong>
-                  {a.description && <span className={styles.muted}> — {a.description}</span>}
+                  <strong>{a.namePt ?? a.name}</strong>
+                  {(a.descriptionPt ?? a.description) && (
+                    <span className={styles.muted}> — {a.descriptionPt ?? a.description}</span>
+                  )}
                 </li>
               ))}
             </ul>

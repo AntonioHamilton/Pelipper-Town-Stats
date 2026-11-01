@@ -26,6 +26,7 @@ export type Condition = {
 export type EvoNode = {
   key: string;
   name: string;
+  namePt: string | null;
   to: { conditions: Condition[]; node: EvoNode }[];
 };
 
@@ -33,6 +34,7 @@ export type Move = {
   level: number;
   id: string;
   name: string;
+  namePt: string | null;
   type: string | null;
   category: string | null;
   power: number | null;
@@ -62,17 +64,19 @@ export type Species = {
   key: string;
   dex: number;
   name: string;
+  namePt: string | null;
   description: string | null;
+  descriptionPt: string | null;
   generation: number | null;
   group: string;
   types: string[];
   weightKg: number | null;
   jobs: { id: string; maxTier: number | null }[];
-  abilities: { id: string; name: string; description: string | null }[];
+  abilities: { id: string; name: string; namePt: string | null; description: string | null; descriptionPt: string | null }[];
   moves: Move[];
   evolutions: {
-    from: { key: string; name: string; conditions: Condition[] }[];
-    to: { targetKey: string; targetName: string; conditions: Condition[] }[];
+    from: { key: string; name: string; namePt: string | null; conditions: Condition[] }[];
+    to: { targetKey: string; targetName: string; targetNamePt: string | null; conditions: Condition[] }[];
     tree: EvoNode;
   };
   encounter: {
@@ -193,7 +197,7 @@ export function faqFor(s: Species, megaForms: { key: string; name: string }[]): 
     const last = s.moves[s.moves.length - 1];
     faq.push({
       question: "Quais golpes ele aprende e em que nível?",
-      answer: `Ele aprende ${s.moves.length} golpes subindo de nível. O primeiro é ${first.name} (nível ${first.level}) e o último é ${last.name} (nível ${last.level}). A tabela completa está acima.`,
+      answer: `Ele aprende ${s.moves.length} golpes subindo de nível. O primeiro é ${first.namePt ?? first.name} (nível ${first.level}) e o último é ${last.namePt ?? last.name} (nível ${last.level}). A tabela completa está acima.`,
     });
   } else {
     faq.push({
