@@ -292,3 +292,16 @@
     font-size: 1.6rem;
   }
 }
+
+.notFound {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.notFound img {
+  image-rendering: pixelated;
+}
