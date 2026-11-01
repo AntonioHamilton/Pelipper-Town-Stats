@@ -5,6 +5,7 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import pokemonData from "../data/pokemon.json";
 import { STAT_COLORS, TYPE_STYLE } from "../labels";
+import { ParallaxBackground } from "../parallax-background";
 import { SiteFooter } from "../site-footer";
 import {
   type EvoNode,
@@ -109,12 +110,8 @@ async function SpeciesContent({ params }: PageProps) {
   const number = `#${String(species.dex).padStart(3, "0")}`;
 
   return (
-    <main
-      className={styles.page}
-      style={{
-        backgroundImage: `linear-gradient(rgba(12, 14, 24, 0.35), rgba(12, 14, 24, 0.55)), url(/backgrounds/${species.types[0] ?? "Normal"}.webp)`,
-      }}
-    >
+    <main className={styles.page}>
+      <ParallaxBackground src={`/backgrounds/${species.types[0] ?? "Normal"}.webp`} />
       <div className={styles.container}>
         <Link href="/" className={styles.back}>
           ‹ Todos os Pokémon

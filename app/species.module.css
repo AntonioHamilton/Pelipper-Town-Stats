@@ -4,12 +4,11 @@
   padding: 24px 16px 120px;
   color: var(--text);
   background-color: var(--bg);
-  background-size: cover;
-  background-position: center top;
-  background-attachment: fixed;
 }
 
 .container {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -358,4 +357,23 @@
 
 .notFound img {
   image-rendering: pixelated;
+}
+
+.parallaxLayer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.parallaxImage {
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 125vh;
+  background-size: cover;
+  background-position: center top;
+  will-change: transform;
 }
