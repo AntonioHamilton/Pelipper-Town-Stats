@@ -97,3 +97,81 @@ export const JOB_NAMES: Record<Lang, Record<string, string>> = {
     CrabPot: "Crab pot",
   },
 };
+
+export const CATEGORY_PT: Record<string, string> = {
+  Physical: "Físico",
+  Special: "Especial",
+  Status: "Status",
+};
+
+export const RARITY_PT: Record<string, string> = {
+  Common: "Comum",
+  Uncommon: "Incomum",
+  Rare: "Raro",
+  Apex: "Apex",
+};
+
+export const THREAT_PT: Record<string, string> = {
+  Gentle: "Gentil",
+  Standard: "Padrão",
+  Strong: "Forte",
+  Apex: "Apex",
+};
+
+export const SEASON_PT: Record<string, string> = {
+  spring: "Primavera",
+  summer: "Verão",
+  fall: "Outono",
+  winter: "Inverno",
+};
+
+export const TIME_PT: Record<string, string> = {
+  Day: "Dia",
+  Night: "Noite",
+};
+
+export const CONTEXT_PT: Record<string, string> = {
+  Overworld: "Mundo aberto",
+  VolcanoDungeon: "Vulcão",
+  Mines: "Minas",
+  SkullCavern: "Caverna do Crânio",
+};
+
+export const LOCATION_PT: Record<string, string> = {
+  Farm: "Fazenda",
+  Forest: "Floresta",
+  Woods: "Bosque",
+  Railroad: "Ferrovia",
+  Mountain: "Montanha",
+  Desert: "Deserto",
+  Beach: "Praia",
+  Town: "Cidade",
+  BusStop: "Ponto de ônibus",
+  IslandWest: "Ilha Oeste",
+  IslandNorth: "Ilha Norte",
+  IslandEast: "Ilha Leste",
+  IslandSouth: "Ilha Sul",
+  IslandSouthEast: "Ilha Sudeste",
+};
+
+export const WEATHER_PT: Record<string, string> = {
+  Sun: "Sol",
+  Rain: "Chuva",
+  Storm: "Tempestade",
+  Wind: "Vento",
+  Snow: "Neve",
+};
+
+export const GENDER_PT: Record<string, string> = {
+  Male: "Macho",
+  Female: "Fêmea",
+};
+
+export const STAT_PT: Record<string, string> = {
+  Health: "Vida",
+  Attack: "Ataque",
+  Defense: "Defesa",
+  SpecialAttack: "Ataque especial",
+  SpecialDefense: "Defesa especial",
+  Speed: "Velocidade",
+};
