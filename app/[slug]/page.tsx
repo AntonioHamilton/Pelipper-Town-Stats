@@ -78,8 +78,12 @@ export default async function SpeciesPage({ params }: PageProps) {
   const base = pokemon.find((p) => p.key === slug);
   const megaForms = await Promise.all(
     pokemon
-      .filter((p) => p.derived && p.key.startsWith("mega-") && p.key.startsWith(`mega-${species.key}-`))
-      .map(async (p) => ({ key: p.key, name: (await loadSpecies(p.key))?.namePt ?? p.name })),
+      .filter(
+        (p) =>
+          p.derived &&
+          (p.key === `mega-${species.key}` || p.key.startsWith(`mega-${species.key}-`)),
+      )
+      .map(async (p) => ({ key: p.key, name: (await loadSpecies(p.key))?.namePt ?? p.name, sprite: p.sprite })),
   );
   const faq = faqFor(species, megaForms);
   const enc = species.encounter;
@@ -89,7 +93,7 @@ export default async function SpeciesPage({ params }: PageProps) {
     <main className={styles.page}>
       <div className={styles.container}>
         <Link href="/" className={styles.back}>
-          ← Todos os Pokémon
+          ‹ Todos os Pokémon
         </Link>
 
         <header className={styles.hero}>
@@ -130,7 +134,13 @@ export default async function SpeciesPage({ params }: PageProps) {
             <dt>Nº Pokédex</dt>
             <dd>{number}</dd>
             <dt>Tipo</dt>
-            <dd>{species.types.map((t) => labels.type(t)).join(" / ")}</dd>
+            <dd className={styles.types}>
+              {species.types.map((t) => (
+                <span key={t} className={styles.type} style={{ background: TYPE_STYLE[t]?.color }}>
+                  {labels.type(t)}
+                </span>
+              ))}
+            </dd>
             <dt>Peso</dt>
             <dd>{formatWeight(species.weightKg)}</dd>
             <dt>Geração</dt>
@@ -167,7 +177,7 @@ export default async function SpeciesPage({ params }: PageProps) {
               ))}
               <li className={styles.statTotal}>
                 <span>Total</span>
-                <span>{base.stats.reduce((a, b) => a + b, 0)}</span>
+                <span className={styles.statValue}>{base.stats.reduce((a, b) => a + b, 0)}</span>
               </li>
             </ul>
           </section>
@@ -175,9 +185,24 @@ export default async function SpeciesPage({ params }: PageProps) {
 
         <section className={styles.card} aria-labelledby="evo">
           <h2 id="evo">Evoluções</h2>
-          {species.evolutions.tree.to.length || species.evolutions.from.length ? (
+          {species.evolutions.tree.to.length || species.evolutions.from.length || megaForms.length ? (
             <div className={styles.evoRoot}>
-              <EvoBranch node={species.evolutions.tree} />
+              <div className={styles.evoCenter}>
+                <EvoBranch node={species.evolutions.tree} />
+                {megaForms.length > 0 && (
+                  <div className={styles.evoMega}>
+                    {megaForms.map((m) => (
+                      <div key={m.key} className={styles.evoEdge}>
+                        <span className={styles.evoCondition}>Mega evolução</span>
+                        <Link href={`/${m.key}`} className={styles.evoCard} aria-label={m.name}>
+                          {m.sprite && <Image src={m.sprite} alt="" width={64} height={64} unoptimized />}
+                          <span>{m.name}</span>
+                        </Link>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           ) : (
             <p className={styles.muted}>Este Pokémon não evolui.</p>
@@ -288,6 +313,7 @@ export default async function SpeciesPage({ params }: PageProps) {
                       <thead>
                         <tr>
                           <th>Ambiente</th>
+                          <th>Locais</th>
                           <th>Raridade</th>
                           <th>Ameaça</th>
                           <th>Níveis</th>
@@ -296,7 +322,11 @@ export default async function SpeciesPage({ params }: PageProps) {
                       <tbody>
                         {enc.profiles.map((p, i) => (
                           <tr key={`${p.context}-${i}`}>
-                            <td>{labels.context(p.context)}</td>
+                            <td>
+                              {labels.context(p.context)}
+                              {p.seasons.length > 0 && <span className={styles.muted}> ({describeSeasons(p.seasons)})</span>}
+                            </td>
+                            <td>{p.locations.length ? describeLocations(p.locations) : "—"}</td>
                             <td>{labels.rarity(p.rarityTier)}</td>
                             <td>{labels.threat(p.threatTier)}</td>
                             <td>
@@ -312,9 +342,10 @@ export default async function SpeciesPage({ params }: PageProps) {
 
               <h3 className={styles.subtitle}>Itens ao ser derrotado</h3>
               {enc.drops.length ? (
-                <ul className={styles.list}>
+                <ul className={styles.dropList}>
                   {enc.drops.map((d) => (
-                    <li key={d.itemId}>
+                    <li key={d.itemId} className={styles.dropItem}>
+                      <Image src={`/items/${d.itemId.match(/(\d+)$/)?.[1]}.png`} alt="" width={32} height={32} unoptimized />
                       {describeDrop(d)}
                       <span className={styles.muted}>
                         {" "}
