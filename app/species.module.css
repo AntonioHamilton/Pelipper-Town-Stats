@@ -381,7 +381,7 @@
   height: 100%;
   display: flex;
   width: max-content;
-  animation: drift 120s linear infinite;
+  animation: drift 300s linear infinite;
 }
 
 .driftSegment {
