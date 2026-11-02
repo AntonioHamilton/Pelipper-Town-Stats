@@ -7,6 +7,7 @@ import styles from "./pokedex.module.css";
 import pokemonData from "./data/pokemon.json";
 import { SiteFooter } from "./site-footer";
 import { JOB_NAMES, Lang, STAT_COLORS, TYPE_NAMES, TYPE_STYLE } from "./labels";
+import { parseFavorites, readFavorites, saveFavorites, subscribeFavorites } from "./favorites";
 
 
 type Pokemon = {
@@ -113,44 +114,6 @@ const UI = {
 
 const LOCALE: Record<Lang, string> = { pt: "pt-BR", en: "en-US" };
 
-
-const FAVORITES_KEY = "pelipper-favorites";
-const FAVORITES_EVENT = "pelipper-favorites-change";
-
-function readFavorites(): string {
-  try {
-    return window.localStorage.getItem(FAVORITES_KEY) ?? "[]";
-  } catch {
-    return "[]";
-  }
-}
-
-function subscribeFavorites(onChange: () => void) {
-  window.addEventListener("storage", onChange);
-  window.addEventListener(FAVORITES_EVENT, onChange);
-  return () => {
-    window.removeEventListener("storage", onChange);
-    window.removeEventListener(FAVORITES_EVENT, onChange);
-  };
-}
-
-function parseFavorites(raw: string): Set<string> {
-  try {
-    const list: unknown = JSON.parse(raw);
-    return new Set(Array.isArray(list) ? list.filter((k) => typeof k === "string") : []);
-  } catch {
-    return new Set();
-  }
-}
-
-function saveFavorites(favorites: Set<string>) {
-  try {
-    window.localStorage.setItem(FAVORITES_KEY, JSON.stringify([...favorites]));
-  } catch {
-    // Armazenamento indisponível: o favorito não persiste nesta sessão.
-  }
-  window.dispatchEvent(new Event(FAVORITES_EVENT));
-}
 
 const totalOf = (p: Pokemon) => p.stats.reduce((a, b) => a + b, 0);
 

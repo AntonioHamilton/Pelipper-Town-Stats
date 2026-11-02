@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import pokemonData from "../data/pokemon.json";
 import { STAT_COLORS, TYPE_STYLE } from "../labels";
 import { DriftingBackground } from "../drifting-background";
+import { FavoriteButton } from "./favorite-button";
 import { SiteFooter } from "../site-footer";
 import {
   type EvoNode,
@@ -118,16 +119,19 @@ async function SpeciesContent({ params }: PageProps) {
         </Link>
 
         <header className={styles.hero}>
-          {base?.sprite && (
-            <Image
-              className={styles.sprite}
-              src={base.sprite}
-              alt={species.namePt ?? species.name}
-              width={160}
-              height={160}
-              unoptimized
-            />
-          )}
+          <div className={styles.spriteCol}>
+            {base?.sprite && (
+              <Image
+                className={styles.sprite}
+                src={base.sprite}
+                alt={species.namePt ?? species.name}
+                width={160}
+                height={160}
+                unoptimized
+              />
+            )}
+            <FavoriteButton pokemonKey={species.key} />
+          </div>
           <div className={styles.heroText}>
             <p className={styles.number}>{number}</p>
             <h1 className={styles.title}>{species.namePt ?? species.name}</h1>
