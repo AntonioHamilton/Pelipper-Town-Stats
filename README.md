@@ -2,7 +2,11 @@
 
 Site com as stats base de todos os Pokémon do mod **Pelipper Town** para Stardew Valley. Dá para filtrar por geração e grupo, buscar por nome ou número, ordenar, marcar favoritos e ver as tarefas (jobs) que cada Pokémon faz no jogo.
 
+Base stats of every Pokémon in the **Pelipper Town** Stardew Valley mod, with types, filters, favorites and jobs.
+
 Acesse: https://pelipper-town-stats.vercel.app
+
+Palavras-chave: Pelipper Town Stats, Stardew Valley Pokémon mod, Pokémon stats, estatísticas Pokémon, Pokédex, Pokémon base stats.
 
 ## Funcionalidades
 
